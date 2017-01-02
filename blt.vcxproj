@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="debug|x64">
+      <Configuration>debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="release|x64">
+      <Configuration>release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>blt</ProjectName>
+    <RootNamespace>blt</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectGuid>{C624127E-5E41-4DEF-A7A2-31C3A8689A2F}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <Import Project="$(SolutionDir)msvc_common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <Import Project="$(SolutionDir)msvc_common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <CustomBuildBeforeTargets>ClCompile</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <CustomBuildBeforeTargets>ClCompile</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>BE_BLT_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>BE_BLT_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\assign_node.hpp" />
+    <ClInclude Include="include\binary_op_node.hpp" />
+    <ClInclude Include="include\block_node.hpp" />
+    <ClInclude Include="include\blt.hpp" />
+    <ClInclude Include="include\blt_autolink.hpp" />
+    <ClInclude Include="include\call_node.hpp" />
+    <ClInclude Include="include\choose_comparison_node.hpp" />
+    <ClInclude Include="include\choose_node.hpp" />
+    <ClInclude Include="include\codegen.hpp" />
+    <ClInclude Include="include\document_node.hpp" />
+    <ClInclude Include="include\expr_list_node.hpp" />
+    <ClInclude Include="include\for_node.hpp" />
+    <ClInclude Include="include\get_context_node.hpp" />
+    <ClInclude Include="include\id_list_node.hpp" />
+    <ClInclude Include="include\if_node.hpp" />
+    <ClInclude Include="include\lexer.hpp" />
+    <ClInclude Include="include\lua_node.hpp" />
+    <ClInclude Include="include\node.hpp" />
+    <ClInclude Include="include\paren_expr_node.hpp" />
+    <ClInclude Include="include\parser.hpp" />
+    <ClInclude Include="include\pch.hpp" />
+    <ClInclude Include="include\ref_bracket_node.hpp" />
+    <ClInclude Include="include\ref_node.hpp" />
+    <ClInclude Include="include\sequence_node.hpp" />
+    <ClInclude Include="include\template_wrapper_node.hpp" />
+    <ClInclude Include="include\ternary_node.hpp" />
+    <ClInclude Include="include\token_data.hpp" />
+    <ClInclude Include="include\token_data_node.hpp" />
+    <ClInclude Include="include\token_node.hpp" />
+    <ClInclude Include="include\token_type.hpp" />
+    <ClInclude Include="include\unary_op_node.hpp" />
+    <ClInclude Include="include\until_node.hpp" />
+    <ClInclude Include="include\while_node.hpp" />
+    <ClInclude Include="include\with_each_node.hpp" />
+    <ClInclude Include="include\with_each_using_index_node.hpp" />
+    <ClInclude Include="include\with_each_using_node.hpp" />
+    <ClInclude Include="include\with_node.hpp" />
+    <ClInclude Include="include\wrapped_expr_node.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\blt.cpp" />
+    <ClCompile Include="src\lexer.cpp" />
+    <ClCompile Include="src\parser.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\token_data.cpp" />
+    <ClCompile Include="src\token_type.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="meta\lexer.rl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release|x64'">ragel --error-format=msvc -s -C -L -G2 -o "$(ProjectDir)src\lexer.cpp" "$(ProjectDir)meta\lexer.rl"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='release|x64'">Compiling Ragel Machine</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='release|x64'">src\lexer.cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='debug|x64'">ragel --error-format=msvc -s -C -L -G2 -o "$(ProjectDir)src\lexer.cpp" "$(ProjectDir)meta\lexer.rl"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Compiling Ragel Machine</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">src\lexer.cpp</Outputs>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release|x64'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='debug|x64'">false</DeploymentContent>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

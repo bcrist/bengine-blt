@@ -1,0 +1,91 @@
+----------- tokens ------------
+; { } [ ] ( ) . , =
+? : + - * / // % ^ & | ~ >> << == ~= < > <= >= && || # $ @
+and or not nil false true
+if else while for per with choose break continue until
+
+Document
+Lua
+NumericLiteral
+StringLiteral
+Id
+
+Whitespace (discarded)
+Newline (discarded)
+Comment (discarded)
+
+
+----------- grammar ------------
+
+template := { template-part } ;
+template-part := Document | stmt ;
+stmt := ( ';' |
+          Lua |
+          block-stmt |
+          if-stmt |
+          while-stmt |
+          for-stmt |
+          with-stmt |
+          choose-stmt |
+          break-stmt |
+          continue-stmt |
+          assign-stmt |
+          expr-list
+        ) [ until-expr ] ;
+
+block-stmt := '{' template '}' ;
+if-stmt := 'if' expr [ stmt ] [ 'else' [ stmt ] ] ;
+while-stmt := 'while' expr [ stmt ] ;
+for-stmt := 'for' '(' [ assign-stmt ] ';' [ expr ] ';' [ assign-stmt ] ')' [ stmt ] ;
+with-stmt := 'with' ( 'each' expr [ 'using' ( '#' | expr ) ] | expr ) [ stmt ] ;
+choose-stmt := 'choose' '{' { choose-clause } '}' ;
+choose-clause := '(' expr ')' [ stmt ] ; 
+break-stmt := 'break' ;
+continue-stmt := 'continue' ;
+assign-stmt := id-list '=' expr-list ;
+
+id-list := Id { ',' Id } ;
+
+until-expr := 'until' expr ;
+
+expr-list := expr { ',' expr } ;
+expr := expr-prefix { expr-suffix } ;
+expr-prefix := '(' expr ')' | literal | unary-op-expr | ref-or-call-expr ;
+expr-suffix := '?' expr ':' expr | binary-op expr ;
+
+literal := 'nil' | 'false' | 'true' | NumericLiteral | StringLiteral ;
+unop-expr := ( '-' | '~' | 'not' | '#' ) expr ;
+ref-or-call-expr := ref [ [ ':' Id ] '(' [ expr-list ] ')' ] ;
+binary-op := '+' | '-' | '*' | '/' | '//' | '%' | '^' | '&' | '|' | '~' |
+             '>>' | '<<' | '==' | '~=' | '<' | '>' | '<=' | '>=' |
+             'and' | 'or' | '&&' | '||' | '..' ;
+
+ref := '@' { '@' } | ref-prefix { ref-suffix } ;
+ref-prefix := '$' { '$' } | Id ;
+ref-suffix := '.' Id | '[' expr ']' ;
+
+// unqualified ref-base lookup:
+// first look for locals
+// then look in global environment
+// then look in ctx
+// prefix with $. to look only in ctx
+// prefix with _ENV. to look only in global environment
+
+
+// Provided by blt and required to execute compiled templates
+blt.is_sequence(value)
+blt.table_cache_(value, function) // if no value in cache associated with value, call function and store first return value in that slot.
+blt.fif_(condition, true_value, false_value)
+blt.create_ctx_(ctx)
+ctx:push(value)
+ctx:get([parent_level])
+ctx:ref(key, [localvalue])
+ctx:write(...)
+ctx:pop()
+ctx:coalesce()
+
+// Provided by blt but not used internally by templates
+blt.get_template(template_name)
+blt.register_template_dir(path)
+blt.register_template_file(path, [template_name])
+blt.register_template_string(string, template_name) 
