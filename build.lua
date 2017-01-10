@@ -10,6 +10,7 @@ module 'blt' {
          restat = true
       },
       pch_src 'src/pch.cpp',
-      define 'BE_BLT_IMPL'
+      define 'BE_BLT_IMPL',
+      link_project 'core'
    }
 }
