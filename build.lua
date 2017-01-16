@@ -9,7 +9,10 @@ module 'blt' {
          generator = true,
          restat = true
       },
-      pch_src 'src/pch.cpp',
+      src {
+         'src/*.cpp',
+         pch_src 'src/pch.cpp'
+      },
       define 'BE_BLT_IMPL',
       link_project 'core'
    }
