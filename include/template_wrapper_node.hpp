@@ -13,7 +13,7 @@ struct TemplateWrapperNode : SequenceNode {
    void operator()(std::ostream& os) const {
       os << "local __was_strict__ = __STRICT"
          << nl << "__STRICT = false"
-         << nl << "local __blt__ = require('blt')"
+         << nl << "local __blt__ = require('be.blt')"
          << nl << "local __ctx__ = __blt__.create_ctx_(...)"
          << nl << "local pgsub = __blt__.pgsub or pgsub"
          << nl << "local explode = __blt__.explode or explode"

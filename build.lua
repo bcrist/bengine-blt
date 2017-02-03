@@ -15,5 +15,13 @@ module 'blt' {
       },
       define 'BE_BLT_IMPL',
       link_project 'core'
+   },
+   lib '-lua' {
+      limp { file = 'src-lua/lua_blt.cpp', inputs = 'meta/lua_blt.lua' },
+      src 'src-lua/*.cpp',
+      define 'BE_BLT_LUA_IMPL',
+      link_project {
+         'belua', 'blt'
+      }
    }
 }

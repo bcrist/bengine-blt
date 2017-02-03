@@ -78,7 +78,7 @@
     <ClInclude Include="include\id_list_node.hpp">
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="include\lua_node.hpp">
+    <ClInclude Include="include\raw_lua_node.hpp">
       <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="include\paren_expr_node.hpp">

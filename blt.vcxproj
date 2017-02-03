@@ -75,7 +75,7 @@
     <ClInclude Include="include\id_list_node.hpp" />
     <ClInclude Include="include\if_node.hpp" />
     <ClInclude Include="include\lexer.hpp" />
-    <ClInclude Include="include\lua_node.hpp" />
+    <ClInclude Include="include\raw_lua_node.hpp" />
     <ClInclude Include="include\node.hpp" />
     <ClInclude Include="include\paren_expr_node.hpp" />
     <ClInclude Include="include\parser.hpp" />

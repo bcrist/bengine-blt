@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BE_BLT_LUA_NODE_HPP_
-#define BE_BLT_LUA_NODE_HPP_
+#ifndef BE_BLT_RAW_LUA_NODE_HPP_
+#define BE_BLT_RAW_LUA_NODE_HPP_
 
 #include "node.hpp"
 #include "token_data.hpp"
