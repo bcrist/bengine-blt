@@ -32,8 +32,8 @@ namespace {
    z_escape =                 '\\z' ( whitespace | newline )* ;
    char_escape =              '\\' any ;
    escape =                   decimal_escape | hex_escape | unicode_escape | z_escape | char_escape ;
-   dq_string =                '"' ( escape | [^\\] )* '"' ;
-   sq_string =                '\'' ( escape | [^\\] )* '\'' ;
+   dq_string =                '"' ( escape | [^\\"] )* '"' ;
+   sq_string =                '\'' ( escape | [^\\'] )* '\'' ;
    string_literal =           dq_string | sq_string ;
 
    hex_exponent =             'p'i ( '+' | '-' )? digit+ ;
@@ -58,8 +58,8 @@ namespace {
       'while'     => { t_(TokenType::kw_while); };
       'for'       => { t_(TokenType::kw_for); };
       'with'      => { t_(TokenType::kw_with); };
-	  'each'      => { t_(TokenType::kw_each); };
-	  'using'     => { t_(TokenType::kw_using); };
+      'each'      => { t_(TokenType::kw_each); };
+      'using'     => { t_(TokenType::kw_using); };
       'choose'    => { t_(TokenType::kw_choose); };
       'break'     => { t_(TokenType::kw_break); };
       'continue'  => { t_(TokenType::kw_continue); };
@@ -79,7 +79,7 @@ namespace {
       '['   => { t_(TokenType::bracket_opener); };
       ']'   => { t_(TokenType::bracket_closer); };      
       '.'   => { t_(TokenType::dot); };
-	  '..'  => { t_(TokenType::dot2); };
+      '..'  => { t_(TokenType::dot2); };
       ','   => { t_(TokenType::comma); };
       '='   => { t_(TokenType::eq); };
       '?'   => { t_(TokenType::question); };

@@ -327,13 +327,15 @@ Node Parser::choose_() {
 ///////////////////////////////////////////////////////////////////////////////
 bool Parser::choose_clause_(IfNode& chain) {
    if (try_next_(TokenType::paren_opener)) {
-      Node expr = expr_();
+      Node case_expr = expr_();
       expect_next_(TokenType::paren_closer);
-      if (!is_empty(expr)) {
-         chain.clauses.emplace_back(std::move(expr), stmt_or_seq_());
+      Node block = expect_(block_(), "block");
+      if (!is_empty(case_expr)) {
+         chain.clauses.emplace_back(std::move(case_expr), std::move(block));
       } else {
-         chain.else_block = stmt_or_seq_();
+         chain.else_block = std::move(block);
       }
+      return true;
    }
    return false;
 }
