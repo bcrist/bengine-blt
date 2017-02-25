@@ -1,0 +1,26 @@
+{
+    "name": "blt",
+    "displayName": "blt",
+    "description": "BLT Template Syntax",
+    "version": "0.0.1",
+    "publisher": "bcrist",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "blt",
+            "aliases": ["BLT", "blt"],
+            "extensions": [".blt"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "blt",
+            "scopeName": "source.blt",
+            "path": "./syntaxes/blt.tmLanguage"
+        }]
+    }
+}
