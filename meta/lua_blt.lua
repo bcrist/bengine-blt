@@ -7,6 +7,7 @@ local next = next
 local load = load
 local tostring = tostring
 local setmetatable = setmetatable
+local global = _G
 
 local fs = require('be.fs')
 local util = require('be.util')
@@ -17,6 +18,16 @@ local M = {
 	compile = compile
 }
 _ENV = M
+
+local function add_dependency (path)
+   if not global.dependency then
+      return
+   end
+   if global.root_dir then
+      path = fs.ancestor_relative(path, global.root_dir)
+   end
+   global.dependency(path)
+end
 
 do
    local templates = { }
@@ -34,6 +45,7 @@ do
 
       local path = fs.find_file(template_name, table.unpack(template_dirs))
       if path then
+         add_dependency(path)
          local contents = fs.get_file_contents(path)
          local fn = util.require_load(contents, '@' .. template_name .. '.blt')
          templates[template_name] = fn
@@ -42,6 +54,7 @@ do
 
       path = fs.find_file(template_name .. '.lua', table.unpack(template_dirs))
       if path then
+         add_dependency(path)
          local contents = fs.get_file_contents(path)
          local fn = util.require_load(contents, '@' .. template_name .. '.blt')
          templates[template_name] = fn
@@ -50,6 +63,7 @@ do
 
       path = fs.find_file(template_name .. '.blt', table.unpack(template_dirs))
       if path then
+         add_dependency(path)
          return register_template_file(path, template_name)
       end
 
