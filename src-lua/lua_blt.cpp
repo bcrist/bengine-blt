@@ -6,7 +6,7 @@
    symbol = 'BE_BLT_COMPILED_LUA_MODULE',
    line_length = 150 }) !! 114 */
 /* ################# !! GENERATED CODE -- DO NOT MODIFY !! ################# */
-#define BE_BLT_COMPILED_LUA_MODULE_LENGTH 8063 
+#define BE_BLT_COMPILED_LUA_MODULE_LENGTH 8063
 #define BE_BLT_COMPILED_LUA_MODULE \
    "\33LuaS\0\31\223\r\n\32\n\4\b\4\b\bxV\0\0\0\0\0\0\0\0\0\0\0(w@\1\n@BLT core\0\0\0\0\0\0\0\0\0\1\22G\0\0\0\6\0@\0F@@\0\206\200@\0\306\300@\0\6\1A\0FAA" \
    "\0\206\201A\0\306\301A\0\6\2B\0FBB\0\206\202B\0\301\302\2\0\244\202\0\1\306\202B\0\1\3\3\0\344\202\0\1-\3\0\1KC\0\0J\3\203\206I\3\0\0\254\3\0\0\313\3" \
