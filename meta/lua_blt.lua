@@ -47,7 +47,7 @@ do
       if path then
          add_dependency(path)
          local contents = fs.get_file_contents(path)
-         local fn = util.require_load(contents, '@' .. template_name .. '.blt')
+         local fn = util.require_load(contents, '@' .. template_name)
          templates[template_name] = fn
          return fn
       end
@@ -56,7 +56,7 @@ do
       if path then
          add_dependency(path)
          local contents = fs.get_file_contents(path)
-         local fn = util.require_load(contents, '@' .. template_name .. '.blt')
+         local fn = util.require_load(contents, '@' .. template_name .. '.lua')
          templates[template_name] = fn
          return fn
       end
@@ -106,9 +106,15 @@ do
       if templates[template_name] ~= nil then
          error('A template named \'' .. template_name .. '\' already exists!')
       end
-      local compiled = compile(string, '@' .. template_name .. '.blt')
+      local compiled = compile(string, '@' .. template_name .. ' (BLT)')
       templates[template_name] = compiled
       return compiled
+   end
+
+   function resolve_template_path (path)
+      return fs.resolve_path(path, template_dirs)
+         or fs.resolve_path(path .. '.lua', template_dirs)
+         or fs.resolve_path(path .. '.blt', template_dirs)
    end
 end
 
