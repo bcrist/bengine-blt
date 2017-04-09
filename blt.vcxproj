@@ -91,6 +91,7 @@
     <ClInclude Include="include\token_type.hpp" />
     <ClInclude Include="include\unary_op_node.hpp" />
     <ClInclude Include="include\until_node.hpp" />
+    <ClInclude Include="include\version.hpp" />
     <ClInclude Include="include\while_node.hpp" />
     <ClInclude Include="include\with_each_node.hpp" />
     <ClInclude Include="include\with_each_using_index_node.hpp" />
