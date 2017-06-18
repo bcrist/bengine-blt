@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include "token_type.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct UnaryOpNode {
    TokenType op;
@@ -43,6 +42,5 @@ struct UnaryOpNode {
 };
 
 } // be::blt
-} // be
 
 #endif

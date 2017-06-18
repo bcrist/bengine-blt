@@ -17,8 +17,7 @@ BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_nonnil_constant), is_nonnil_constant)
 BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_nullipotent), is_nullipotent)
 BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_debug), debug)
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 struct NodeDebugContext {
@@ -153,6 +152,5 @@ void debug_cir(const C& cn, const I& in, const R& rn, std::ostream& os, const No
 }
 
 } // be::blt
-} // be
 
 #endif

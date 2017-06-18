@@ -6,8 +6,7 @@
 
 #define BE_BLT_TOKEN_ESTIMATE_RATIO 0.2
 
-namespace be {
-namespace blt {
+namespace be::blt {
 namespace {
 %%{
    machine blt_lexer;
@@ -290,4 +289,3 @@ void Lexer::check_newlines_() {
 }
 
 } // be::blt
-} // be

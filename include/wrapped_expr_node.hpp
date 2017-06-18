@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct WrappedExprNode {
    Node expr;
@@ -40,6 +39,5 @@ struct WrappedExprNode {
 };
 
 } // be::blt
-} // be
 
 #endif

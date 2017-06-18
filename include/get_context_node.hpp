@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include "token_data.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct GetContextNode {
    U32 level;
@@ -42,6 +41,5 @@ struct GetContextNode {
 };
 
 } // be::blt
-} // be
 
 #endif

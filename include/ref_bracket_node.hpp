@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct RefBracketNode {
    Node parent;
@@ -42,6 +41,5 @@ struct RefBracketNode {
 };
 
 } // be::blt
-} // be
 
 #endif

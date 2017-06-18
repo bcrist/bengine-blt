@@ -1,8 +1,7 @@
 #include "lua_blt_debug.hpp"
 #include <be/blt/blt.hpp>
 
-namespace be {
-namespace belua {
+namespace be::belua {
 
 ///////////////////////////////////////////////////////////////////////////////
 const luaL_Reg blt_debug_module { "be.blt.debug", open_blt_debug };
@@ -28,4 +27,3 @@ int open_blt_debug(lua_State* L) {
 }
 
 } // be::belua
-} // be

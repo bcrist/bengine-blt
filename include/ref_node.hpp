@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/util/string_span.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct RefNode {
    gsl::cstring_span<> id;
@@ -48,6 +47,5 @@ struct RefNode {
 };
 
 } // be::blt
-} // be
 
 #endif

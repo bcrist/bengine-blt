@@ -122,8 +122,7 @@
 
 /* ######################### END OF GENERATED CODE ######################### */
 
-namespace be {
-namespace belua {
+namespace be::belua {
 
 ///////////////////////////////////////////////////////////////////////////////
 const luaL_Reg blt_module { "be.blt", open_blt };
@@ -182,4 +181,3 @@ int open_blt_compile(lua_State* L) {
 }
 
 } // be::belua
-} // be

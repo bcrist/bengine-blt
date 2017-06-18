@@ -5,8 +5,7 @@
 #include "blt_autolink.hpp"
 #include <be/core/be.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 void compile_blt(gsl::cstring_span<> input, std::ostream& os);
 S compile_blt(gsl::cstring_span<> input);
@@ -15,6 +14,5 @@ void debug_blt(gsl::cstring_span<> input, std::ostream& os);
 S debug_blt(gsl::cstring_span<> input);
 
 } // be::blt
-} // be
 
 #endif

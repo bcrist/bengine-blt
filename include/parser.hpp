@@ -8,8 +8,7 @@
 #include "if_node.hpp"
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 class Parser final : Immovable {
@@ -66,6 +65,5 @@ private:
 };
 
 } // be::blt
-} // be
 
 #endif

@@ -79,7 +79,7 @@
     <ClInclude Include="include\node.hpp" />
     <ClInclude Include="include\paren_expr_node.hpp" />
     <ClInclude Include="include\parser.hpp" />
-    <ClInclude Include="include\pch.hpp" />
+    <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="include\ref_bracket_node.hpp" />
     <ClInclude Include="include\ref_node.hpp" />
     <ClInclude Include="include\sequence_node.hpp" />
@@ -112,10 +112,10 @@
   <ItemGroup>
     <CustomBuild Include="meta\lexer.rl">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='release|x64'">ragel --error-format=msvc -s -C -L -G2 -o "$(ProjectDir)src\lexer.cpp" "$(ProjectDir)meta\lexer.rl"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='release|x64'">cd "$(SolutionDir)" &amp;&amp; ragel --error-format=msvc -s -C -L -G2 -o "modules\blt\src\lexer.cpp" "modules\blt\meta\lexer.rl"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='release|x64'">Compiling Ragel Machine</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='release|x64'">src\lexer.cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='debug|x64'">ragel --error-format=msvc -s -C -L -G2 -o "$(ProjectDir)src\lexer.cpp" "$(ProjectDir)meta\lexer.rl"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='debug|x64'">cd "$(SolutionDir)" &amp;&amp; ragel --error-format=msvc -s -C -L -G2 -o "modules\blt\src\lexer.cpp" "modules\blt\meta\lexer.rl"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='debug|x64'">Compiling Ragel Machine</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='debug|x64'">src\lexer.cpp</Outputs>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='release|x64'">false</DeploymentContent>

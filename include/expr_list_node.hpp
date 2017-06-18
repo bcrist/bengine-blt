@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct ExprListNode {
    std::vector<Node> exprs;
@@ -69,6 +68,5 @@ struct ExprListNode {
 };
 
 } // be::blt
-} // be
 
 #endif

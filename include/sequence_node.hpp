@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct SequenceNode {
    std::vector<Node> seq;
@@ -48,6 +47,5 @@ struct SequenceNode {
 };
 
 } // be::blt
-} // be
 
 #endif

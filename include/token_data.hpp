@@ -6,8 +6,7 @@
 #include <be/core/be.hpp>
 #include <gsl/string_span>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 struct TokenLocation {
@@ -26,6 +25,5 @@ struct TokenData {
 S pretty_token(const TokenData& token);
 
 } // be::blt
-} // be
 
 #endif

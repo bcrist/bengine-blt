@@ -6,8 +6,7 @@
 #include <be/core/console_indent.hpp>
 #include <be/util/string_span.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct CallNode {
    Node ref;
@@ -56,6 +55,5 @@ struct CallNode {
 };
 
 } // be::blt
-} // be
 
 #endif

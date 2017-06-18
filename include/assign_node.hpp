@@ -4,8 +4,7 @@
 
 #include "node.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct AssignNode {
    Node ids;
@@ -45,6 +44,5 @@ struct AssignNode {
 };
 
 } // be::blt
-} // be
 
 #endif

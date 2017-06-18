@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\lua_blt_autolink.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\lua_modules.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -25,6 +22,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\lua_blt_debug.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\blt_lua_autolink.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

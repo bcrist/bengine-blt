@@ -2,8 +2,7 @@
 #include "token_data.hpp"
 #include "codegen.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 S pretty_token(const TokenData& token) {
@@ -45,4 +44,3 @@ S pretty_token(const TokenData& token) {
 }
 
 } // be::blt
-} // be

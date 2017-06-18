@@ -2,8 +2,7 @@
 #include "token_type.hpp"
 #include <stdexcept>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 const char* get_name(TokenType type) {
@@ -128,4 +127,3 @@ const char* to_lua(TokenType type) {
 }
 
 } // be::blt
-} // be

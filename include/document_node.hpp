@@ -7,8 +7,7 @@
 #include "codegen.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct DocumentNode {
    const TokenData* token;
@@ -50,6 +49,5 @@ struct DocumentNode {
 };
 
 } // be::blt
-} // be
 
 #endif

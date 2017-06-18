@@ -6,8 +6,7 @@
 #include "token_type.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct TokenNode {
    TokenType token;
@@ -48,6 +47,5 @@ struct TokenNode {
 };
 
 } // be::blt
-} // be
 
 #endif

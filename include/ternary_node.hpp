@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include "token_type.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct TernaryNode {
    Node condition;
@@ -58,6 +57,5 @@ struct TernaryNode {
 };
 
 } // be::blt
-} // be
 
 #endif

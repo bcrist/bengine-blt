@@ -4,8 +4,7 @@
 #include "parser.hpp"
 #include <sstream>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 void compile_blt(gsl::cstring_span<> input, std::ostream& os) {
@@ -38,4 +37,3 @@ S debug_blt(gsl::cstring_span<> input) {
 }
 
 } // be::blt
-} // be

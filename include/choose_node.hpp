@@ -8,8 +8,7 @@
 #include <be/core/services.hpp>
 #include <sstream>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct ChooseNode : IfNode {
 
@@ -106,6 +105,5 @@ struct ChooseNode : IfNode {
 };
 
 } // be::blt
-} // be
 
 #endif

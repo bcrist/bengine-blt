@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include "token_type.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct BinaryOpNode {
    Node left;
@@ -51,6 +50,5 @@ struct BinaryOpNode {
 };
 
 } // be::blt
-} // be
 
 #endif

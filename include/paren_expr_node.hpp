@@ -6,8 +6,7 @@
 #include "token_type.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct ParenExprNode {
    Node expr;
@@ -41,6 +40,5 @@ struct ParenExprNode {
 };
 
 } // be::blt
-} // be
 
 #endif

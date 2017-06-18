@@ -2,8 +2,7 @@
 #ifndef BE_BLT_TOKEN_TYPE_HPP_
 #define BE_BLT_TOKEN_TYPE_HPP_
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 enum class TokenType {
@@ -85,6 +84,5 @@ const char* get_name(TokenType type);
 const char* to_lua(TokenType type);
 
 } // be::blt
-} // be
 
 #endif

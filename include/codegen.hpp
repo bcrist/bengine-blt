@@ -5,8 +5,7 @@
 #include <be/core/console_indent.hpp>
 #include <sstream>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 template <typename Str>
@@ -87,6 +86,5 @@ S limit_length(const Str& data, I32 max_chars = 15, bool ellipsis = true) {
 }
 
 } // be::blt
-} // be
 
 #endif

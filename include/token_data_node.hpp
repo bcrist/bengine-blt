@@ -6,8 +6,7 @@
 #include "token_data.hpp"
 #include <be/util/string_span.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct TokenDataNode {
    const TokenData* token;
@@ -48,6 +47,5 @@ struct TokenDataNode {
 };
 
 } // be::blt
-} // be
 
 #endif

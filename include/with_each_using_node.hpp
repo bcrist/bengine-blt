@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct WithEachUsingNode {
    Node expr;
@@ -52,6 +51,5 @@ struct WithEachUsingNode {
 };
 
 } // be::blt
-} // be
 
 #endif

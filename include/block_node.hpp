@@ -5,8 +5,7 @@
 #include "sequence_node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct BlockNode {
    SequenceNode contents;
@@ -40,6 +39,5 @@ struct BlockNode {
 };
 
 } // be::blt
-} // be
 
 #endif

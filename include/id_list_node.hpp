@@ -6,8 +6,7 @@
 #include <be/util/string_span.hpp>
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct IdListNode {
    std::vector<gsl::cstring_span<>> ids;
@@ -55,6 +54,5 @@ struct IdListNode {
 };
 
 } // be::blt
-} // be
 
 #endif

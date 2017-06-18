@@ -4,8 +4,7 @@
 
 #include "node.hpp"
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct ChooseComparisonNode {
    Node expr;
@@ -39,6 +38,5 @@ struct ChooseComparisonNode {
 };
 
 } // be::blt
-} // be
 
 #endif

@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct WhileNode {
    Node expr;
@@ -45,6 +44,5 @@ struct WhileNode {
 };
 
 } // be::blt
-} // be
 
 #endif

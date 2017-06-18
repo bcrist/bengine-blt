@@ -27,8 +27,7 @@
 #include <be/core/logging.hpp>
 #include <be/core/exceptions.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 Parser::Parser(const token_container& tokens)
@@ -564,4 +563,3 @@ bool Parser::ref_suffix_(Node& ref_node) {
 }
 
 } // be::blt
-} // be

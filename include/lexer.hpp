@@ -6,8 +6,7 @@
 #include <gsl/string_span>
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
 class Lexer final : Immovable {
@@ -35,6 +34,5 @@ private:
 };
 
 } // be::blt
-} // be
 
 #endif

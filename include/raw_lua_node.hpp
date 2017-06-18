@@ -6,8 +6,7 @@
 #include "token_data.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct LuaNode {
    const TokenData* token;
@@ -79,6 +78,5 @@ struct LuaNode {
 };
 
 } // be::blt
-} // be
 
 #endif

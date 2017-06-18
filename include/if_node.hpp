@@ -6,8 +6,7 @@
 #include <be/core/console_indent.hpp>
 #include <vector>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct IfNode {
    std::vector<std::pair<Node, Node>> clauses;
@@ -84,6 +83,5 @@ struct IfNode {
 };
 
 } // be::blt
-} // be
 
 #endif

@@ -6,7 +6,7 @@
 
 #define BE_BLT_VERSION_MAJOR 0
 #define BE_BLT_VERSION_MINOR 1
-#define BE_BLT_VERSION_REV 1
+#define BE_BLT_VERSION_REV 2
 
 /*!! include('common/version', 'be::blt') !! 6 */
 /* ################# !! GENERATED CODE -- DO NOT MODIFY !! ################# */

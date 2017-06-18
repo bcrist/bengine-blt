@@ -5,8 +5,7 @@
 #include "node.hpp"
 #include <be/core/console_indent.hpp>
 
-namespace be {
-namespace blt {
+namespace be::blt {
 
 struct ForNode {
    Node init;
@@ -74,6 +73,5 @@ struct ForNode {
 };
 
 } // be::blt
-} // be
 
 #endif
