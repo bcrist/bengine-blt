@@ -102,7 +102,7 @@ void Parser::error_(const char* expected) {
       be_short_error("Parse Error") << "Expected " << expected << " but found EOF" | default_log();
    }
 
-   throw RecoverableException<void>("Parse Error");
+   throw RecoverableError(std::make_error_code(std::errc::illegal_byte_sequence), "Parse Error");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ Node Parser::template_part_() {
             n = stmt_();
          }
          break;
-      } catch (const RecoverableException<void>&) {
+      } catch (const RecoverableError&) {
          using std::swap;
          swap(error_start_, next_);
          if (check_next_()) {

@@ -1777,7 +1777,7 @@ case 77:
 /* #line 127 "modules\\blt\\meta\\lexer.rl" */
 
    if (cs == blt_lexer_error) {
-      throw RecoverableException<void>("Lexer error!");
+      throw RecoverableError(std::make_error_code(std::errc::illegal_byte_sequence), "Lexer error!");
    }
 }
 

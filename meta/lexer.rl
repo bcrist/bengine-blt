@@ -126,7 +126,7 @@ void Lexer::lex_backtick_(gsl::cstring_span<> contents) {
    %% write exec;
 
    if (cs == blt_lexer_error) {
-      throw RecoverableException<void>("Lexer error!");
+      throw RecoverableError(std::make_error_code(std::errc::illegal_byte_sequence), "Lexer error!");
    }
 }
 
