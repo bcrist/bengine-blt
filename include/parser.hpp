@@ -14,6 +14,7 @@ namespace be::blt {
 class Parser final : Immovable {
    using token_container = std::vector<TokenData>;
    using token_iterator = token_container::const_iterator;
+   using node_ptr = std::unique_ptr<Node>;
 public:
    Parser(const token_container& tokens);
    void generate(std::ostream& os);
@@ -28,40 +29,40 @@ private:
    bool check_next_(TokenType token) const;
    bool try_next_(TokenType token);
    const TokenData* expect_next_(TokenType token);
-   Node expect_(Node node, const char* expected);
+   node_ptr expect_(node_ptr node, const char* expected);
 
    void error_(const char* expected);
 
-   TemplateWrapperNode template_wrapper_();
-   SequenceNode template_();
-   Node template_part_();
-   Node stmt_or_seq_();
-   Node stmt_();
-   Node stmt_prefix_();
+   node_ptr template_wrapper_();
+   void template_(SequenceNode& node);
+   node_ptr template_part_();
+   node_ptr stmt_or_seq_();
+   node_ptr stmt_();
+   node_ptr stmt_prefix_();
 
-   template <typename N = BlockNode>
-   Node block_();
-   Node if_(IfNode* chain = nullptr);
+   node_ptr seq_block_();
+   node_ptr block_();
+   node_ptr if_(IfNode* chain = nullptr);
    void if_else_(IfNode& chain);
-   Node while_();
-   Node for_();
-   Node with_();
-   Node choose_();
+   node_ptr while_();
+   node_ptr for_();
+   node_ptr with_();
+   node_ptr choose_();
    bool choose_clause_(IfNode& chain);
-   Node assign_(bool local = true);
+   node_ptr assign_(bool local = true);
 
-   Node id_list_();
+   node_ptr id_list_();
 
-   Node wrapped_expr_list_();
-   Node expr_list_();
-   Node expr_();
-   Node subexpr_();
-   Node subexpr_prefix_();
-   bool subexpr_suffix_(Node& expr_node);
+   node_ptr wrapped_expr_list_();
+   node_ptr expr_list_();
+   node_ptr expr_();
+   node_ptr subexpr_();
+   node_ptr subexpr_prefix_();
+   bool subexpr_suffix_(node_ptr& expr_node);
 
-   Node ref_or_call_();
-   Node ref_();
-   bool ref_suffix_(Node& ref_node);
+   node_ptr ref_or_call_();
+   node_ptr ref_();
+   bool ref_suffix_(node_ptr& ref_node);
 };
 
 } // be::blt

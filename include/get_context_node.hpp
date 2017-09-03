@@ -7,10 +7,12 @@
 
 namespace be::blt {
 
-struct GetContextNode {
+struct GetContextNode : Node {
    U32 level;
 
-   void operator()(std::ostream& os) const {
+   GetContextNode(U32 level) : level(level) { }
+
+   virtual void operator()(std::ostream& os) const override {
       if (level == 0) {
          os << "__ctx__:get()";
       } else {
@@ -18,23 +20,23 @@ struct GetContextNode {
       }
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return true;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("GetContext (" + std::to_string(level) + ")", os, ctx.c_prefix, ctx.last_line_empty);
    }
 

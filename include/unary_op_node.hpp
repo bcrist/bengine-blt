@@ -7,35 +7,37 @@
 
 namespace be::blt {
 
-struct UnaryOpNode {
+struct UnaryOpNode : Node {
    TokenType op;
-   Node expr;
-   
-   void operator()(std::ostream& os) const {
+   std::unique_ptr<Node> expr;
+
+   UnaryOpNode(TokenType op, std::unique_ptr<Node> expr) : op(op), expr(std::move(expr)) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << to_lua(op) << ' ';
-      expr(os);
+      (*expr)(os);
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
-      return expr.is_static_constant();
+   virtual bool is_static_constant() const override {
+      return expr->is_static_constant();
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       // all unary ops either:
       //  - are defined for nil operands and never output nil (not)
       //  - throw when an operand is nil (negation, complement, len)
-      return expr.is_nonnil_constant() || expr.is_static_constant();
+      return expr->is_nonnil_constant() || expr->is_static_constant();
    }
 
-   bool is_nullipotent() const {
-      return expr.is_nullipotent();
+   virtual bool is_nullipotent() const override {
+      return expr->is_nullipotent();
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_cr("UnaryOp " + S(get_name(op)), expr, os, ctx);
    }
 

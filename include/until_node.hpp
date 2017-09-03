@@ -7,37 +7,40 @@
 
 namespace be::blt {
 
-struct UntilNode {
-   Node block;
-   Node stop_condition;
+struct UntilNode : Node {
+   std::unique_ptr<Node> block;
+   std::unique_ptr<Node> stop_condition;
 
-   void operator()(std::ostream& os) const {
+   UntilNode(std::unique_ptr<Node> block, std::unique_ptr<Node> stop_condition)
+      : block(std::move(block)), stop_condition(std::move(stop_condition)) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << nl << "repeat " << indent;
-      if (!is_empty(block)) {
-         block(os);
+      if (block) {
+         (*block)(os);
       }
       os << unindent << nl << "until " << indent;
-      stop_condition(os);
+      (*stop_condition)(os);
       os << unindent;
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_cir("Until ", block, stop_condition, os, ctx);
    }
 

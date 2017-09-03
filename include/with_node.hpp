@@ -7,37 +7,40 @@
 
 namespace be::blt {
 
-struct WithNode {
-   Node expr;
-   Node block;
+struct WithNode : Node{
+   std::unique_ptr<Node> expr;
+   std::unique_ptr<Node> block;
 
-   void operator()(std::ostream& os) const {
+   WithNode(std::unique_ptr<Node> expr, std::unique_ptr<Node> block)
+      : expr(std::move(expr)), block(std::move(block)) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << nl << "__ctx__:push( " << indent;
-      expr(os);
+      (*expr)(os);
       os << unindent << " ) ";
-      if (!is_empty(block)) {
-         block(os);
+      if (block) {
+         (*block)(os);
       }
       os << nl << "__ctx__:pop() ";
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_lcr(expr, "With", block, os, ctx);
    }
 

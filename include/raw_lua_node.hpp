@@ -8,10 +8,12 @@
 
 namespace be::blt {
 
-struct LuaNode {
+struct LuaNode : Node {
    const TokenData* token;
 
-   void operator()(std::ostream& os) const {
+   LuaNode(const TokenData* token) : token(token) { }
+
+   virtual void operator()(std::ostream& os) const override {
       assert(token->type == TokenType::lua);
 
       os << nl;
@@ -55,23 +57,23 @@ struct LuaNode {
       //os << unindent << nl << "end ";
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("Lua " + limit_length(single_quote_escape(token->text), 30), os, ctx.c_prefix, ctx.last_line_empty);
    }
 

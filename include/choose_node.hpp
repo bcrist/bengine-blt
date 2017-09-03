@@ -18,7 +18,7 @@ struct ChooseNode : IfNode {
       if (!use_table_lookup()) {
          // wrap exprs
          for (auto& clause : clauses) {
-            clause.first = ChooseComparisonNode { std::move(clause.first) };
+            clause.first = std::make_unique<ChooseComparisonNode>(std::move(clause.first));
          }
       } else {
          table_cache_id = service<std::atomic<U32>>(Id("be:blt:service:atomic-u32:table-cache-id")).fetch_add(1);
@@ -28,7 +28,7 @@ struct ChooseNode : IfNode {
    bool use_table_lookup() const {
       if (clauses.size() > 4) {
          for (auto& clause : clauses) {
-            if (!clause.first.is_static_constant()) {
+            if (!clause.first->is_static_constant()) {
                // table-based lookup doesn't work well with keys that aren't known until runtime
                return false;
             }
@@ -38,7 +38,7 @@ struct ChooseNode : IfNode {
       return false;
    }
 
-   void operator()(std::ostream& os) const {
+   virtual void operator()(std::ostream& os) const override {
       if (use_table_lookup()) {
          do_table_lookup(os);
       } else {
@@ -54,9 +54,9 @@ struct ChooseNode : IfNode {
    }
 
    void do_table_lookup(std::ostream& os) const {
-      const std::pair<Node, Node>* nil_clause = nullptr;
+      const std::pair<std::unique_ptr<Node>, std::unique_ptr<Node>>* nil_clause = nullptr;
       for (auto& clause : clauses) {
-         if (!clause.first.is_nonnil_constant()) {
+         if (!clause.first->is_nonnil_constant()) {
             // can't store a nil key in a table
             nil_clause = &clause;
          }
@@ -65,9 +65,9 @@ struct ChooseNode : IfNode {
       os << nl << "do" << indent;
       os << nl << "local __k__ = __ctx__:get()";
 
-      if (nil_clause && !is_empty(nil_clause->second)) {
+      if (nil_clause && nil_clause->second) {
          os << nl << "if __k__ == nil then " << indent;
-         nil_clause->second(os);
+         (*nil_clause->second)(os);
          os << unindent << nl << "else" << indent;
       }
          
@@ -77,10 +77,10 @@ struct ChooseNode : IfNode {
       for (auto& clause : clauses) {
          if (&clause != nil_clause) {
             os << nl << "[ " << indent;
-            clause.first(os);
+            (*clause.first)(os);
             os << " ] = function () " << indent;
-            if (!is_empty(clause.second)) {
-               clause.second(os);
+            if (clause.second) {
+               (*clause.second)(os);
             }
             os << unindent << nl << " end";
          }
@@ -91,13 +91,13 @@ struct ChooseNode : IfNode {
 
       os << nl << "if __k__ then __k__() end";
 
-      if (nil_clause && !is_empty(nil_clause->second)) {
+      if (nil_clause && nil_clause->second) {
          os << unindent << nl << "end";
       }
       os << unindent << nl << "end ";
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("Choose", os, ctx.c_prefix, ctx.last_line_empty);
       debug_if(os, ctx);
    }

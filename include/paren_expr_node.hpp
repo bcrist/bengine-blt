@@ -8,32 +8,34 @@
 
 namespace be::blt {
 
-struct ParenExprNode {
-   Node expr;
+struct ParenExprNode : Node {
+   std::unique_ptr<Node> expr;
 
-   void operator()(std::ostream& os) const {
+   ParenExprNode(std::unique_ptr<Node> expr) : expr(std::move(expr)) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << '(';
-      expr(os);
+      (*expr)(os);
       os << ')';
    }
 
-   bool is_literal() const {
-      return expr.is_literal();
+   virtual bool is_literal() const override {
+      return expr->is_literal();
    }
 
-   bool is_static_constant() const {
-      return expr.is_static_constant();
+   virtual bool is_static_constant() const override {
+      return expr->is_static_constant();
    }
 
-   bool is_nonnil_constant() const {
-      return expr.is_nonnil_constant();
+   virtual bool is_nonnil_constant() const override {
+      return expr->is_nonnil_constant();
    }
 
-   bool is_nullipotent() const {
-      return expr.is_nullipotent();
+   virtual bool is_nullipotent() const override {
+      return expr->is_nullipotent();
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_cr("ParenExpr", expr, os, ctx);
    }
 

@@ -8,10 +8,10 @@
 
 namespace be::blt {
 
-struct IdListNode {
+struct IdListNode : Node {
    std::vector<gsl::cstring_span<>> ids;
 
-   void operator()(std::ostream& os) const {
+   virtual void operator()(std::ostream& os) const override {
       bool first = true;
       for (auto id : ids) {
          if (first) {
@@ -23,23 +23,23 @@ struct IdListNode {
       }
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return true;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("IdList", os, ctx.c_prefix, ctx.last_line_empty);
 
       for (auto it = ids.begin(), end = ids.end(); it != end; ++it) {

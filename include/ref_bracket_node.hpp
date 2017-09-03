@@ -7,34 +7,37 @@
 
 namespace be::blt {
 
-struct RefBracketNode {
-   Node parent;
-   Node expr;
+struct RefBracketNode : Node {
+   std::unique_ptr<Node> parent;
+   std::unique_ptr<Node> expr;
 
-   void operator()(std::ostream& os) const {
-      parent(os);
+   RefBracketNode(std::unique_ptr<Node> parent, std::unique_ptr<Node> expr)
+      : parent(std::move(parent)), expr(std::move(expr)) { }
+
+   virtual void operator()(std::ostream& os) const override {
+      (*parent)(os);
       os << '[' << indent;
-      expr(os);
+      (*expr)(os);
       os << ']' << unindent;
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return true;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_lcr(parent, "RefBracket", expr, os, ctx);
    }
 

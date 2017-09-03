@@ -7,33 +7,17 @@
 
 namespace be::blt {
 
-struct BlockNode {
-   SequenceNode contents;
-
-   void operator()(std::ostream& os) const {
+struct BlockNode : SequenceNode {
+   
+   virtual void operator()(std::ostream& os) const override {
       os << nl << "do " << indent;
-      contents(os);
+      SequenceNode::operator()(os);
       os << unindent << nl << "end ";
    }
 
-   bool is_literal() const {
-      return false;
-   }
-
-   bool is_static_constant() const {
-      return false;
-   }
-
-   bool is_nonnil_constant() const {
-      return false;
-   }
-
-   bool is_nullipotent() const {
-      return false;
-   }
-
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
-      debug_cr("Block", contents, os, ctx);
+protected:
+   virtual const char* name_() const override {
+      return "Block";
    }
 
 };

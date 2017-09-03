@@ -7,37 +7,43 @@
 
 namespace be::blt {
 
-struct RefNode {
+struct RefNode : Node {
    gsl::cstring_span<> id;
-   Node parent;
+   std::unique_ptr<Node> parent;
 
-   void operator()(std::ostream& os) const {
-      if (is_empty(parent)) {
+   RefNode(gsl::cstring_span<> id)
+      : id(id) { }
+
+   RefNode(gsl::cstring_span<> id, std::unique_ptr<Node> parent)
+      : id(id), parent(std::move(parent)) { }
+
+   virtual void operator()(std::ostream& os) const override {
+      if (!parent) {
          os << "(__ctx__:ref('" << id << "', " << id << "))";
       } else {
-         parent(os);
+         (*parent)(os);
          os << '.' << id;
       }
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return true;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
-      if (is_empty(parent)) {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
+      if (!parent) {
          debug_c("Ref " + single_quote_escape(id), os, ctx.c_prefix, ctx.last_line_empty);
       } else {
          debug_lc(parent, "Ref " + single_quote_escape(id), os, ctx);

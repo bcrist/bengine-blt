@@ -7,16 +7,19 @@
 
 namespace be::blt {
 
-struct ForNode {
-   Node init;
-   Node condition;
-   Node update;
-   Node block;
+struct ForNode : Node {
+   std::unique_ptr<Node> init;
+   std::unique_ptr<Node> condition;
+   std::unique_ptr<Node> update;
+   std::unique_ptr<Node> block;
 
-   void operator()(std::ostream& os) const {
-      if (!is_empty(init)) {
+   ForNode(std::unique_ptr<Node> init, std::unique_ptr<Node> condition, std::unique_ptr<Node> update, std::unique_ptr<Node> block)
+      : init(std::move(init)), condition(std::move(condition)), update(std::move(condition)), block(std::move(block)) { }
+
+   virtual void operator()(std::ostream& os) const override {
+      if (init) {
          os << nl << "do " << indent;
-         init(os);
+         (*init)(os);
          write_loop(os);
          os << unindent << nl << "end ";
       } else {
@@ -26,8 +29,8 @@ struct ForNode {
 
    void write_loop(std::ostream& os) const {
       os << nl << "while " << indent << indent;
-      if (!is_empty(condition)) {
-         condition(os);
+      if (condition) {
+         (*condition)(os);
       } else {
          os << "true";
       }
@@ -37,32 +40,32 @@ struct ForNode {
    }
 
    void write_block(std::ostream& os) const {
-      if (!is_empty(block)) {
-         block(os);
+      if (block) {
+         (*block)(os);
       }
       os << nl << "::__continue__:: ";
-      if (!is_empty(update)) {
-         update(os);
+      if (update) {
+         (*update)(os);
       }
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_l(init, os, ctx.l_prefix, ctx.last_line_empty);
       debug_c("For", os, ctx.c_prefix, ctx.last_line_empty);
       debug_i(condition, os, ctx.r_prefix, ctx.last_line_empty);

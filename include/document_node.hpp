@@ -9,10 +9,12 @@
 
 namespace be::blt {
 
-struct DocumentNode {
+struct DocumentNode : Node {
    const TokenData* token;
 
-   void operator()(std::ostream& os) const {
+   DocumentNode(const TokenData* t) : token(t) { }
+
+   virtual void operator()(std::ostream& os) const override {
       assert(token->type == TokenType::document);
       os << nl << "__ctx__:write " << indent;
 
@@ -26,23 +28,23 @@ struct DocumentNode {
       os << unindent;
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("Document " + limit_length(single_quote_escape(token->text), 30), os, ctx.c_prefix, ctx.last_line_empty);
    }
 

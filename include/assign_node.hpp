@@ -6,38 +6,41 @@
 
 namespace be::blt {
 
-struct AssignNode {
-   Node ids;
-   Node exprs;
+struct AssignNode : Node {
+   std::unique_ptr<Node> ids;
+   std::unique_ptr<Node> exprs;
    bool local;
 
-   void operator()(std::ostream& os) const {
+   AssignNode(std::unique_ptr<Node> ids, std::unique_ptr<Node> exprs, bool local)
+      : ids(std::move(ids)), exprs(std::move(exprs)), local(local) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << nl;
       if (local) {
          os << "local ";
       }
-      ids(os);
+      (*ids)(os);
       os << " = ";
-      exprs(os);
+      (*exprs)(os);
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_lcr(ids, (local ? "Assign (local)" : "Assign"), exprs, os, ctx);
    }
 

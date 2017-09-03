@@ -23,6 +23,7 @@
 #include "ref_node.hpp"
 #include "ref_bracket_node.hpp"
 #include "get_context_node.hpp"
+#include "simple_sequence_node.hpp"
 #include "wrapped_expr_node.hpp"
 #include <be/core/logging.hpp>
 #include <be/core/exceptions.hpp>
@@ -40,7 +41,7 @@ Parser::Parser(const token_container& tokens)
 void Parser::generate(std::ostream& os) {
    error_start_ = tokens_.begin();
    next_ = tokens_.begin();
-   template_wrapper_()(os);
+   (*template_wrapper_())(os);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,7 @@ void Parser::debug(std::ostream& os) {
    next_ = tokens_.begin();
    bool e = true;
    NodeDebugContext ctx { S("  "), S("--"), S("  "), e };
-   template_wrapper_().debug(os, ctx);
+   template_wrapper_()->debug(os, ctx);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,8 +88,8 @@ const TokenData* Parser::expect_next_(TokenType type) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::expect_(Node node, const char* expected) {
-   if (is_empty(node)) {
+std::unique_ptr<Node> Parser::expect_(node_ptr node, const char* expected) {
+   if (!node) {
       error_(expected);
    }
    return node;
@@ -106,12 +107,9 @@ void Parser::error_(const char* expected) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-TemplateWrapperNode Parser::template_wrapper_() {
-   TemplateWrapperNode n;
-   Node part;
-   while (!is_empty(part = template_part_())) {
-      n.seq.push_back(std::move(part));
-   }
+std::unique_ptr<Node> Parser::template_wrapper_() {
+   auto n = std::make_unique<TemplateWrapperNode>();
+   template_(*n);
    if (check_next_()) {
       be_short_error("Parse Error") << "Expected EOF but found " << pretty_token(*next_) | default_log();
    }
@@ -119,22 +117,20 @@ TemplateWrapperNode Parser::template_wrapper_() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-SequenceNode Parser::template_() {
-   SequenceNode n;
-   Node part;
-   while (!is_empty(part = template_part_())) {
-      n.seq.push_back(std::move(part));
+void Parser::template_(SequenceNode& node) {
+   node_ptr part;
+   while (part = template_part_()) {
+      node.seq.push_back(std::move(part));
    }
-   return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::template_part_() {
-   Node n;
+std::unique_ptr<Node> Parser::template_part_() {
+   node_ptr n;
    for (;;) {
       try {
          if (check_next_(TokenType::document)) {
-            n = DocumentNode { &(*next_) };
+            n = std::make_unique<DocumentNode>(&(*next_));
             ++next_;
          } else {
             n = stmt_();
@@ -157,12 +153,12 @@ Node Parser::template_part_() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::stmt_or_seq_() {
-   Node n;
+std::unique_ptr<Node> Parser::stmt_or_seq_() {
+   node_ptr n;
    if (check_next_(TokenType::brace_opener)) {
-      n = block_<SequenceNode>();
-      if (!is_empty(n) && try_next_(TokenType::kw_until)) {
-         n = UntilNode { std::move(n), expect_(expr_(), "expression") };
+      n = seq_block_();
+      if (n && try_next_(TokenType::kw_until)) {
+         n = std::make_unique<UntilNode>(std::move(n), expect_(expr_(), "expression"));
       }
    } else {
       n = stmt_();
@@ -171,20 +167,20 @@ Node Parser::stmt_or_seq_() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::stmt_() {
-   Node n = stmt_prefix_();
-   if (!is_empty(n) && try_next_(TokenType::kw_until)) {
-      n = UntilNode { std::move(n), expect_(expr_(), "expression") };
+std::unique_ptr<Node> Parser::stmt_() {
+   node_ptr n = stmt_prefix_();
+   if (n && try_next_(TokenType::kw_until)) {
+      n = std::make_unique<UntilNode>(std::move(n), expect_(expr_(), "expression"));
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::stmt_prefix_() {
-   Node n;
+std::unique_ptr<Node> Parser::stmt_prefix_() {
+   node_ptr n;
    if (check_next_()) {
       switch (next_->type) {
-         case TokenType::lua:          n = LuaNode { &(*next_) }; ++next_; break;
+         case TokenType::lua:          n = std::make_unique<LuaNode>(&(*next_)); ++next_; break;
          case TokenType::brace_opener: n = block_(); break;
          case TokenType::kw_if:        n = if_(); break;
          case TokenType::kw_while:     n = while_(); break;
@@ -195,13 +191,13 @@ Node Parser::stmt_prefix_() {
          case TokenType::semicolon:
          case TokenType::kw_break:
          case TokenType::kw_continue:
-            n = TokenNode { next_->type };
+            n = std::make_unique<TokenNode>(next_->type);
             ++next_;
             break;
 
          default: {
             n = assign_();
-            if (is_empty(n)) {
+            if (!n) {
                n = wrapped_expr_list_();
             }
             break;
@@ -212,31 +208,41 @@ Node Parser::stmt_prefix_() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template <typename N>
-Node Parser::block_() {
-   Node n;
+std::unique_ptr<Node> Parser::seq_block_() {
    if (try_next_(TokenType::brace_opener)) {
-      SequenceNode block = template_();
+      std::unique_ptr<SimpleSequenceNode> seq = std::make_unique<SimpleSequenceNode>();
+      template_(*seq);
       expect_next_(TokenType::brace_closer);
-      n = N { std::move(block) };
+      return seq;
    }
-   return n;
+   return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::if_(IfNode* chain) {
-   Node n;
+std::unique_ptr<Node> Parser::block_() {
+   if (try_next_(TokenType::brace_opener)) {
+      std::unique_ptr<BlockNode> block = std::make_unique<BlockNode>();
+      template_(*block);
+      expect_next_(TokenType::brace_closer);
+      return block;
+   }
+   return nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+std::unique_ptr<Node> Parser::if_(IfNode* chain) {
+   node_ptr n;
    if (try_next_(TokenType::kw_if)) {
-      Node expr = expect_(expr_(), "expression");
-      Node block = stmt_or_seq_();
+      node_ptr expr = expect_(expr_(), "expression");
+      node_ptr block = stmt_or_seq_();
       if (chain) {
          chain->clauses.emplace_back(std::move(expr), std::move(block));
          if_else_(*chain);
       } else {
-         IfNode node;
-         node.clauses.emplace_back(std::move(expr), std::move(block));
-         if_else_(node);
-         n = node;
+         auto node = std::make_unique<IfNode>();
+         node->clauses.emplace_back(std::move(expr), std::move(block));
+         if_else_(*node);
+         n = std::move(node);
       }
    }
    return n;
@@ -248,7 +254,7 @@ void Parser::if_else_(IfNode& chain) {
       if (check_next_(TokenType::kw_if)) {
          if_(&chain);
       } else if (check_next_(TokenType::brace_opener)) {
-         chain.else_block = block_<SequenceNode>();
+         chain.else_block = seq_block_();
       } else {
          chain.else_block = stmt_();
       }
@@ -256,69 +262,69 @@ void Parser::if_else_(IfNode& chain) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::while_() {
-   Node n;
+std::unique_ptr<Node> Parser::while_() {
+   node_ptr n;
    if (try_next_(TokenType::kw_while)) {
-      Node expr = expect_(expr_(), "expression");
-      n = WhileNode { std::move(expr), stmt_or_seq_() };
+      node_ptr expr = expect_(expr_(), "expression");
+      n = std::make_unique<WhileNode>(std::move(expr), stmt_or_seq_());
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::for_() {
-   Node n;
+std::unique_ptr<Node> Parser::for_() {
+   node_ptr n;
    if (try_next_(TokenType::kw_for)) {
       expect_next_(TokenType::paren_opener);
-      Node init = assign_();
+      node_ptr init = assign_();
       expect_next_(TokenType::semicolon);
-      Node condition = expr_();
+      node_ptr condition = expr_();
       expect_next_(TokenType::semicolon);
-      Node update = assign_(false);
+      node_ptr update = assign_(false);
       expect_next_(TokenType::paren_closer);
-      n = ForNode { std::move(init), std::move(condition), std::move(update), stmt_or_seq_() };
+      n = std::make_unique<ForNode>(std::move(init), std::move(condition), std::move(update), stmt_or_seq_());
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::with_() {
-   Node n;
+std::unique_ptr<Node> Parser::with_() {
+   node_ptr n;
    if (try_next_(TokenType::kw_with)) {
       bool each = try_next_(TokenType::kw_each);
-      Node expr = expect_(expr_(), "expression");
+      node_ptr expr = expect_(expr_(), "expression");
       if (each) {
          if (try_next_(TokenType::kw_using)) {
             if (try_next_(TokenType::pound)) {
-               n = WithEachUsingIndexNode { std::move(expr), stmt_or_seq_() };
+               n = std::make_unique<WithEachUsingIndexNode>(std::move(expr), stmt_or_seq_());
             } else {
-               Node using_expr = expr_();
-               if (!is_empty(using_expr)) {
-                  n = WithEachUsingNode { std::move(expr), std::move(using_expr), stmt_or_seq_() };
+               node_ptr using_expr = expr_();
+               if (using_expr) {
+                  n = std::make_unique<WithEachUsingNode>(std::move(expr), std::move(using_expr), stmt_or_seq_());
                } else {
-                  n = WithEachNode { std::move(expr), stmt_or_seq_() };
+                  n = std::make_unique<WithEachNode>(std::move(expr), stmt_or_seq_());
                }
             }
          } else {
-            n = WithEachNode { std::move(expr), stmt_or_seq_() };
+            n = std::make_unique<WithEachNode>(std::move(expr), stmt_or_seq_());
          }
       } else {
-         n = WithNode { std::move(expr), stmt_() };
+         n = std::make_unique<WithNode>(std::move(expr), stmt_());
       }
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::choose_() {
-   Node n;
+std::unique_ptr<Node> Parser::choose_() {
+   node_ptr n;
    if (try_next_(TokenType::kw_choose)) { 
       expect_next_(TokenType::brace_opener);
-      ChooseNode node;
-      while (choose_clause_(node));
+      auto node = std::make_unique<ChooseNode>();
+      while (choose_clause_(*node));
       expect_next_(TokenType::brace_closer);
-      node.init();
-      n = node;
+      node->init();
+      n = std::move(node);
    }
    return n;
 }
@@ -326,10 +332,10 @@ Node Parser::choose_() {
 ///////////////////////////////////////////////////////////////////////////////
 bool Parser::choose_clause_(IfNode& chain) {
    if (try_next_(TokenType::paren_opener)) {
-      Node case_expr = expr_();
+      node_ptr case_expr = expr_();
       expect_next_(TokenType::paren_closer);
-      Node block = expect_(block_(), "block");
-      if (!is_empty(case_expr)) {
+      node_ptr block = expect_(seq_block_(), "block");
+      if (case_expr) {
          chain.clauses.emplace_back(std::move(case_expr), std::move(block));
       } else {
          chain.else_block = std::move(block);
@@ -340,12 +346,12 @@ bool Parser::choose_clause_(IfNode& chain) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::assign_(bool local) {
-   Node n;
+std::unique_ptr<Node> Parser::assign_(bool local) {
+   node_ptr n;
    auto restore_point = next_;
-   Node ids = id_list_();
-   if (!is_empty(ids) && try_next_(TokenType::eq)) {
-      n = AssignNode { std::move(ids), expect_(expr_list_(), "expression-list"), local };
+   node_ptr ids = id_list_();
+   if (ids && try_next_(TokenType::eq)) {
+      n = std::make_unique<AssignNode>(std::move(ids), expect_(expr_list_(), "expression-list"), local);
    } else {
       next_ = restore_point;
    }
@@ -353,95 +359,95 @@ Node Parser::assign_(bool local) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::id_list_() {
-   Node n ;
+std::unique_ptr<Node> Parser::id_list_() {
+   node_ptr n ;
    if (check_next_(TokenType::identifier)) {
-      IdListNode list;
+      auto list = std::make_unique<IdListNode>();
 
-      list.ids.push_back(next_->text);
+      list->ids.push_back(next_->text);
       error_start_ = next_;
       ++next_;
 
       while (try_next_(TokenType::comma)) {
-         list.ids.push_back(expect_next_(TokenType::identifier)->text);
+         list->ids.push_back(expect_next_(TokenType::identifier)->text);
       }
 
-      n = list;
+      n = std::move(list);
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::wrapped_expr_list_() {
-   Node n = expr_();
-   if (!is_empty(n)) {
-      n = WrappedExprNode { std::move(n) };
+std::unique_ptr<Node> Parser::wrapped_expr_list_() {
+   node_ptr n = expr_();
+   if (n) {
+      n = std::make_unique<WrappedExprNode>(std::move(n));
 
       if (check_next_(TokenType::comma)) {
-         SequenceNode list;
-         list.seq.push_back(std::move(n));
+         auto list = std::make_unique<BlockNode>();
+         list->seq.push_back(std::move(n));
 
          while (try_next_(TokenType::comma)) {
-            list.seq.push_back(WrappedExprNode { expect_(expr_(), "expression") });
+            list->seq.push_back(std::make_unique<WrappedExprNode>(expect_(expr_(), "expression")));
          }
 
-         n = list;
+         n = std::move(list);
       }
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::expr_list_() {
-   Node n = expr_();
-   if (!is_empty(n) && check_next_(TokenType::comma)) {
-      ExprListNode list;
-      list.exprs.push_back(std::move(n));
+std::unique_ptr<Node> Parser::expr_list_() {
+   node_ptr n = expr_();
+   if (n && check_next_(TokenType::comma)) {
+      auto list = std::make_unique<ExprListNode>();
+      list->exprs.push_back(std::move(n));
 
       while (try_next_(TokenType::comma)) {
-         list.exprs.push_back(expect_(expr_(), "expression"));
+         list->exprs.push_back(expect_(expr_(), "expression"));
       }
 
-      n = list;
+      n = std::move(list);
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::expr_() {
-   Node n = subexpr_();
+std::unique_ptr<Node> Parser::expr_() {
+   node_ptr n = subexpr_();
    if (try_next_(TokenType::question)) {
-      Node true_expr = expect_(expr_(), "expression");
+      node_ptr true_expr = expect_(expr_(), "expression");
       expect_next_(TokenType::colon);
-      n = TernaryNode { std::move(n), std::move(true_expr), expect_(expr_(), "expression") };
+      n = std::make_unique<TernaryNode>(std::move(n), std::move(true_expr), expect_(expr_(), "expression"));
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::subexpr_() {
-   Node n = subexpr_prefix_();
-   if (!is_empty(n)) {
+std::unique_ptr<Node> Parser::subexpr_() {
+   node_ptr n = subexpr_prefix_();
+   if (n) {
       while (subexpr_suffix_(n));
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::subexpr_prefix_() {
-   Node n;
+std::unique_ptr<Node> Parser::subexpr_prefix_() {
+   node_ptr n;
    if (check_next_()) {
       switch (next_->type) {
          case TokenType::kw_nil:
          case TokenType::kw_false:
          case TokenType::kw_true:
-            n = TokenNode { next_->type };
+            n = std::make_unique<TokenNode>(next_->type);
             ++next_;
             break;
 
          case TokenType::numeric_literal:
          case TokenType::string_literal:
-            n = TokenDataNode { &(*next_) };
+            n = std::make_unique<TokenDataNode>(&(*next_));
             ++next_;
             break;
 
@@ -452,14 +458,14 @@ Node Parser::subexpr_prefix_() {
             TokenType type = next_->type;
             error_start_ = next_;
             ++next_;
-            n = UnaryOpNode { type, expect_(subexpr_(), "expression") };
+            n = std::make_unique<UnaryOpNode>(type, expect_(subexpr_(), "expression"));
             break;
          }
          
          case TokenType::paren_opener:
             error_start_ = next_;
             ++next_;
-            n = ParenExprNode { expect_(expr_(), "expression") };
+            n = std::make_unique<ParenExprNode>(expect_(expr_(), "expression"));
             expect_next_(TokenType::paren_closer);
             break;
 
@@ -472,7 +478,7 @@ Node Parser::subexpr_prefix_() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Parser::subexpr_suffix_(Node& expr_node) {
+bool Parser::subexpr_suffix_(node_ptr& expr_node) {
    if (check_next_()) {
       switch (next_->type) {
          case TokenType::plus:
@@ -501,7 +507,7 @@ bool Parser::subexpr_suffix_(Node& expr_node) {
             TokenType token = next_->type;
             error_start_ = next_;
             ++next_;
-            expr_node = BinaryOpNode { std::move(expr_node), token, expect_(subexpr_(), "expression") };
+            expr_node = std::make_unique<BinaryOpNode>(std::move(expr_node), token, expect_(subexpr_(), "expression"));
             return true;
          }
 
@@ -511,50 +517,50 @@ bool Parser::subexpr_suffix_(Node& expr_node) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::ref_or_call_() {
+std::unique_ptr<Node> Parser::ref_or_call_() {
    //ref-or-call-expr := ref [ [ ':' Id ] '(' expr-list ')' ] ;
-   Node n = ref_();
-   if (!is_empty(n)) {
+   node_ptr n = ref_();
+   if (n) {
       if (try_next_(TokenType::colon)) {
          gsl::cstring_span<> method = expect_next_(TokenType::identifier)->text;
          expect_next_(TokenType::paren_opener);
-         Node expr_list = expr_list_();
+         node_ptr expr_list = expr_list_();
          expect_next_(TokenType::paren_closer);
-         n = CallNode { std::move(n), std::move(expr_list), method };
+         n = std::make_unique<CallNode>(std::move(n), std::move(expr_list), method);
       } else if (try_next_(TokenType::paren_opener)) {
-         Node expr_list = expr_list_();
+         node_ptr expr_list = expr_list_();
          expect_next_(TokenType::paren_closer);
-         n = CallNode { std::move(n), std::move(expr_list) };
+         n = std::make_unique<CallNode>(std::move(n), std::move(expr_list));
       }
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Node Parser::ref_() {
-   Node n;
+std::unique_ptr<Node> Parser::ref_() {
+   node_ptr n;
    U32 money = 0;
    while (try_next_(TokenType::dollars)) ++money;
    if (money) {
-      n = GetContextNode { money - 1 };
+      n = std::make_unique<GetContextNode>(money - 1);
    } else if (check_next_(TokenType::identifier)) {
-      n = RefNode { next_->text };
+      n = std::make_unique<RefNode>(next_->text);
       error_start_ = next_;
       ++next_;
    }
-   if (!is_empty(n)) {
+   if (n) {
       while (ref_suffix_(n));
    }
    return n;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Parser::ref_suffix_(Node& ref_node) {
+bool Parser::ref_suffix_(node_ptr& ref_node) {
    if (try_next_(TokenType::dot)) {
-      ref_node = RefNode { expect_next_(TokenType::identifier)->text, std::move(ref_node) };
+      ref_node = std::make_unique<RefNode>(expect_next_(TokenType::identifier)->text, std::move(ref_node));
       return true;
    } else if (try_next_(TokenType::bracket_opener)) {
-      ref_node = RefBracketNode { std::move(ref_node), expect_(expr_(), "expression") };
+      ref_node = std::make_unique<RefBracketNode>(std::move(ref_node), expect_(expr_(), "expression"));
       expect_next_(TokenType::bracket_closer);
       return true;
    } else {

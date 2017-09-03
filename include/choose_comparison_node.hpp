@@ -6,32 +6,35 @@
 
 namespace be::blt {
 
-struct ChooseComparisonNode {
-   Node expr;
+struct ChooseComparisonNode : Node {
+   std::unique_ptr<Node> expr;
 
-   void operator()(std::ostream& os) const {
+   ChooseComparisonNode(std::unique_ptr<Node> expr)
+      : expr(std::move(expr)) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << "__k__ == ( ";
-      expr(os);
+      (*expr)(os);
       os << " )";
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_cr("ChooseComparison", expr, os, ctx);
    }
 

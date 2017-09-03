@@ -9,7 +9,7 @@ namespace be::blt {
 
 struct TemplateWrapperNode : SequenceNode {
 
-   void operator()(std::ostream& os) const {
+   virtual void operator()(std::ostream& os) const override {
       os << "local __was_strict__ = __STRICT"
          << nl << "__STRICT = false"
          << nl << "local __blt__ = require('be.blt')"
@@ -28,32 +28,9 @@ struct TemplateWrapperNode : SequenceNode {
          << nl;
    }
 
-   bool is_literal() const {
-      return false;
-   }
-
-   bool is_static_constant() const {
-      return false;
-   }
-
-   bool is_nonnil_constant() const {
-      return false;
-   }
-
-   bool is_nullipotent() const {
-      return false;
-   }
-
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
-      debug_c("Template", os, ctx.c_prefix, ctx.last_line_empty);
-
-      for (auto it = seq.begin(), end = seq.end(); it != end; ++it) {
-         if (it + 1 != end) {
-            debug_i(*it, os, ctx.r_prefix, ctx.last_line_empty);
-         } else {
-            debug_r(*it, os, ctx.r_prefix, ctx.last_line_empty);
-         }
-      }
+protected:
+   virtual const char* name_() const override {
+      return "Template";
    }
 
 };

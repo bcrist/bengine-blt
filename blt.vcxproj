@@ -79,6 +79,7 @@
     <ClInclude Include="include\node.hpp" />
     <ClInclude Include="include\paren_expr_node.hpp" />
     <ClInclude Include="include\parser.hpp" />
+    <ClInclude Include="include\simple_sequence_node.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="include\ref_bracket_node.hpp" />
     <ClInclude Include="include\ref_node.hpp" />

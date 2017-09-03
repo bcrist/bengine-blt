@@ -8,53 +8,53 @@
 
 namespace be::blt {
 
-struct IfNode {
-   std::vector<std::pair<Node, Node>> clauses;
-   Node else_block;
+struct IfNode : Node {
+   std::vector<std::pair<std::unique_ptr<Node>, std::unique_ptr<Node>>> clauses;
+   std::unique_ptr<Node> else_block;
 
-   void operator()(std::ostream& os) const {
+   virtual void operator()(std::ostream& os) const override {
       if (!clauses.empty()) {
          const char* kw = "if ";
          for (auto& clause : clauses) {
             os << nl << kw << indent << indent;
-            clause.first(os);
+            (*clause.first)(os);
             os << " then " << unindent;
-            if (!is_empty(clause.second)) {
-               clause.second(os);
+            if (clause.second) {
+               (*clause.second)(os);
             }
             os << unindent;
             kw = "elseif ";
          }
-         if (!is_empty(else_block)) {
+         if (else_block) {
             os << nl << "else " << indent;
-            else_block(os);
+            (*else_block)(os);
             os << unindent;
          }
          os << nl << "end ";
-      } else if (!is_empty(else_block)) {
+      } else if (else_block) {
          os << nl << "do " << indent;
-         else_block(os);
+         (*else_block)(os);
          os << unindent << nl << "end ";
       }
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("If", os, ctx.c_prefix, ctx.last_line_empty);
       debug_if(os, ctx);
    }

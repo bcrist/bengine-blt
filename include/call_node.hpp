@@ -8,40 +8,46 @@
 
 namespace be::blt {
 
-struct CallNode {
-   Node ref;
-   Node expr_list;
+struct CallNode : Node {
+   std::unique_ptr<Node> ref;
+   std::unique_ptr<Node> expr_list;
    gsl::cstring_span<> method;
 
-   void operator()(std::ostream& os) const {
-      ref(os);
+   CallNode(std::unique_ptr<Node> ref, std::unique_ptr<Node> expr_list)
+      : ref(std::move(ref)), expr_list(std::move(expr_list)) { }
+
+   CallNode(std::unique_ptr<Node> ref, std::unique_ptr<Node> expr_list, gsl::cstring_span<> method)
+      : ref(std::move(ref)), expr_list(std::move(expr_list)), method(method) { }
+
+   virtual void operator()(std::ostream& os) const override {
+      (*ref)(os);
       if (!method.empty()) {
          os << ":" << method;
       }
       os << '(' << indent;
-      if (!is_empty(expr_list)) {
-         expr_list(os);
+      if (expr_list) {
+         (*expr_list)(os);
       }
       os << ')' << unindent;
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       return false;
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return false;
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return false;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return false;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_l(ref, os, ctx.l_prefix, ctx.last_line_empty);
 
       if (!method.empty()) {

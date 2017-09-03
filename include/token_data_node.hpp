@@ -8,14 +8,16 @@
 
 namespace be::blt {
 
-struct TokenDataNode {
+struct TokenDataNode : Node {
    const TokenData* token;
 
-   void operator()(std::ostream& os) const {
+   TokenDataNode(const TokenData* token) : token(token) { }
+
+   virtual void operator()(std::ostream& os) const override {
       os << token->text;
    }
 
-   bool is_literal() const {
+   virtual bool is_literal() const override {
       switch (token->type) {
          case TokenType::numeric_literal:
          case TokenType::string_literal:
@@ -28,19 +30,19 @@ struct TokenDataNode {
       }
    }
 
-   bool is_static_constant() const {
+   virtual bool is_static_constant() const override {
       return is_literal();
    }
 
-   bool is_nonnil_constant() const {
+   virtual bool is_nonnil_constant() const override {
       return is_literal() && token->type != TokenType::kw_nil;
    }
 
-   bool is_nullipotent() const {
+   virtual bool is_nullipotent() const override {
       return is_literal() || token->type == TokenType::identifier;
    }
 
-   void debug(std::ostream& os, NodeDebugContext& ctx) const {
+   virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("TokenData " + S(get_name(token->type)) + " " + limit_length(single_quote_escape(token->text), 25), os, ctx.c_prefix, ctx.last_line_empty);
    }
 

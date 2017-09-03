@@ -3,19 +3,7 @@
 #define BE_BLT_NODE_HPP_
 
 #include <be/core/console_indent.hpp>
-#include <boost/type_erasure/any.hpp>
-#include <boost/type_erasure/operators.hpp>
-#include <boost/type_erasure/member.hpp>
-#include <boost/type_erasure/callable.hpp>
-#include <boost/type_erasure/is_empty.hpp>
-#include <boost/mpl/vector.hpp>
 #include <ostream>
-
-BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_literal), is_literal)
-BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_static_constant), is_static_constant)
-BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_nonnil_constant), is_nonnil_constant)
-BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_is_nullipotent), is_nullipotent)
-BOOST_TYPE_ERASURE_MEMBER((be)(blt)(has_debug), debug)
 
 namespace be::blt {
 
@@ -26,26 +14,25 @@ struct NodeDebugContext {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-using Node = boost::type_erasure::any<boost::mpl::vector<
-   boost::type_erasure::copy_constructible<>,
-   has_is_literal<bool(), const boost::type_erasure::_self>,
-   has_is_static_constant<bool(), const boost::type_erasure::_self>,
-   has_is_nonnil_constant<bool(), const boost::type_erasure::_self>,
-   has_is_nullipotent<bool(), const boost::type_erasure::_self>,
-   has_debug<void(std::ostream&, NodeDebugContext&), const boost::type_erasure::_self>,
-   boost::type_erasure::callable<void(std::ostream&), const boost::type_erasure::_self>,
-   boost::type_erasure::relaxed>>;
+struct Node {
+   virtual ~Node() = default;
+
+   virtual bool is_literal() const = 0;
+   virtual bool is_static_constant() const = 0;
+   virtual bool is_nonnil_constant() const = 0;
+   virtual bool is_nullipotent() const = 0;
+
+   virtual void debug(std::ostream& os, NodeDebugContext& context) const = 0;
+   virtual void operator()(std::ostream& os) const = 0;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
-using boost::type_erasure::is_empty;
-
-///////////////////////////////////////////////////////////////////////////////
-inline void debug_node(const Node& node, std::ostream& os, NodeDebugContext& ctx) {
-   if (is_empty(node)) {
+inline void debug_node(const std::unique_ptr<Node>& node, std::ostream& os, NodeDebugContext& ctx) {
+   if (!node) {
       os << ctx.c_prefix << " nil" << nl;
       ctx.last_line_empty = false;
    } else {
-      node.debug(os, ctx);
+      node->debug(os, ctx);
    }
 }
 
@@ -56,7 +43,7 @@ inline void debug_c(const S& str, std::ostream& os, const S& prefix, bool& e) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline void debug_l(const Node& node, std::ostream& os, const S& prefix, bool& e) {
+inline void debug_l(const std::unique_ptr<Node>& node, std::ostream& os, const S& prefix, bool& e) {
    NodeDebugContext ctx { prefix + "    ", prefix + " /--", prefix + " |  ", e };
    if (!e) {
       os << ctx.l_prefix << nl;
@@ -75,7 +62,7 @@ inline void debug_l(const S& str, std::ostream& os, const S& prefix, bool& e) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline void debug_i(const Node& node, std::ostream& os, const S& prefix, bool& e) {
+inline void debug_i(const std::unique_ptr<Node>& node, std::ostream& os, const S& prefix, bool& e) {
    NodeDebugContext ctx { prefix + " |  ", prefix + " +--", prefix + " |  ", e };
    debug_node(node, os, ctx);
 }
@@ -87,7 +74,7 @@ inline void debug_i(const S& str, std::ostream& os, const S& prefix, bool& e) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-inline void debug_r(const Node& node, std::ostream& os, const S& prefix, bool& e) {
+inline void debug_r(const std::unique_ptr<Node>& node, std::ostream& os, const S& prefix, bool& e) {
    NodeDebugContext ctx { prefix + " |  ", prefix + " \\--", prefix + "    ", e };
    debug_node(node, os, ctx);
    if (!e) {
