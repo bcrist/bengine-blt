@@ -70,10 +70,10 @@ struct ChooseNode : IfNode {
          (*nil_clause->second)(os);
          os << unindent << nl << "else" << indent;
       }
-         
+
       os << nl << "__k__ = __blt__.table_cache_(" << table_cache_id << ", function ()" << indent << indent;
       os << nl << "return {" << indent;
-      
+
       for (auto& clause : clauses) {
          if (&clause != nil_clause) {
             os << nl << "[ " << indent;
@@ -85,7 +85,7 @@ struct ChooseNode : IfNode {
             os << unindent << nl << " end";
          }
       }
-      
+
       os << unindent << nl << '}';
       os << unindent << nl << "end)[__k__]" << unindent;
 

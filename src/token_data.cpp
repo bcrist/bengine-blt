@@ -28,7 +28,7 @@ S pretty_token(const TokenData& token) {
          val.append(single_quote_escape(data));
          break;
       }
-      
+
       default:
          val = get_name(token.type);
          break;

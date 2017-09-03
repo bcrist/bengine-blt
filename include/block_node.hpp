@@ -8,7 +8,7 @@
 namespace be::blt {
 
 struct BlockNode : SequenceNode {
-   
+
    virtual void operator()(std::ostream& os) const override {
       os << nl << "do " << indent;
       SequenceNode::operator()(os);

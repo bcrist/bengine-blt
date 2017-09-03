@@ -55,7 +55,7 @@ struct ExprListNode : Node {
 
    virtual void debug(std::ostream& os, NodeDebugContext& ctx) const override {
       debug_c("ExprList", os, ctx.c_prefix, ctx.last_line_empty);
-      
+
       for (auto it = exprs.begin(), end = exprs.end(); it != end; ++it) {
          if (it + 1 != end) {
             debug_i(*it, os, ctx.r_prefix, ctx.last_line_empty);

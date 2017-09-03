@@ -318,7 +318,7 @@ std::unique_ptr<Node> Parser::with_() {
 ///////////////////////////////////////////////////////////////////////////////
 std::unique_ptr<Node> Parser::choose_() {
    node_ptr n;
-   if (try_next_(TokenType::kw_choose)) { 
+   if (try_next_(TokenType::kw_choose)) {
       expect_next_(TokenType::brace_opener);
       auto node = std::make_unique<ChooseNode>();
       while (choose_clause_(*node));
@@ -461,7 +461,7 @@ std::unique_ptr<Node> Parser::subexpr_prefix_() {
             n = std::make_unique<UnaryOpNode>(type, expect_(subexpr_(), "expression"));
             break;
          }
-         
+
          case TokenType::paren_opener:
             error_start_ = next_;
             ++next_;
