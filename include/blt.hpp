@@ -2,7 +2,6 @@
 #ifndef BE_BLT_BLT_HPP_
 #define BE_BLT_BLT_HPP_
 
-#include "blt_autolink.hpp"
 #include <be/core/be.hpp>
 
 namespace be::blt {

@@ -63,7 +63,6 @@
     <ClInclude Include="include\binary_op_node.hpp" />
     <ClInclude Include="include\block_node.hpp" />
     <ClInclude Include="include\blt.hpp" />
-    <ClInclude Include="include\blt_autolink.hpp" />
     <ClInclude Include="include\call_node.hpp" />
     <ClInclude Include="include\choose_comparison_node.hpp" />
     <ClInclude Include="include\choose_node.hpp" />

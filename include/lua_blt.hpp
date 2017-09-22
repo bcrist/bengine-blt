@@ -2,8 +2,6 @@
 #ifndef BE_BLT_LUA_BLT_HPP_
 #define BE_BLT_LUA_BLT_HPP_
 
-#include "blt_lua_autolink.hpp"
-#include "blt_autolink.hpp"
 #include <lua/lua.h>
 #include <lua/lauxlib.h>
 
