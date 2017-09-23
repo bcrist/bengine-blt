@@ -3,6 +3,7 @@
 #define BE_BLT_BLT_HPP_
 
 #include <be/core/be.hpp>
+#include <gsl/string_span>
 
 namespace be::blt {
 
