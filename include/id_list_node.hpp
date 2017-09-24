@@ -3,13 +3,12 @@
 #define BE_BLT_ID_LIST_NODE_HPP_
 
 #include "node.hpp"
-#include <be/util/string_span.hpp>
 #include <vector>
 
 namespace be::blt {
 
 struct IdListNode : Node {
-   std::vector<gsl::cstring_span<>> ids;
+   std::vector<SV> ids;
 
    virtual void operator()(std::ostream& os) const override {
       bool first = true;

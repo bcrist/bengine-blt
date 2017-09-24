@@ -1,5 +1,6 @@
 #include "lua_blt_debug.hpp"
 #include <be/blt/blt.hpp>
+#include <be/belua/lua_helpers.hpp>
 
 namespace be::belua {
 
@@ -10,9 +11,8 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////////////
 int blt_debug(lua_State* L) {
-   std::size_t len;
-   const char* input = luaL_tolstring(L, 1, &len);
-   S output = blt::debug_blt(gsl::cstring_span<>(input, len));
+   SV input = belua::to_string_view(L, 1);
+   S output = blt::debug_blt(input);
    lua_settop(L, 0);
    lua_pushlstring(L, output.c_str(), output.length());
    return 1;

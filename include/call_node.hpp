@@ -4,19 +4,18 @@
 
 #include "token_data_node.hpp"
 #include <be/core/console_indent.hpp>
-#include <be/util/string_span.hpp>
 
 namespace be::blt {
 
 struct CallNode : Node {
    std::unique_ptr<Node> ref;
    std::unique_ptr<Node> expr_list;
-   gsl::cstring_span<> method;
+   SV method;
 
    CallNode(std::unique_ptr<Node> ref, std::unique_ptr<Node> expr_list)
       : ref(std::move(ref)), expr_list(std::move(expr_list)) { }
 
-   CallNode(std::unique_ptr<Node> ref, std::unique_ptr<Node> expr_list, gsl::cstring_span<> method)
+   CallNode(std::unique_ptr<Node> ref, std::unique_ptr<Node> expr_list, SV method)
       : ref(std::move(ref)), expr_list(std::move(expr_list)), method(method) { }
 
    virtual void operator()(std::ostream& os) const override {

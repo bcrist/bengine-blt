@@ -6,6 +6,7 @@
 #include "token_data.hpp"
 #include "codegen.hpp"
 #include <be/core/console_indent.hpp>
+#include <algorithm>
 
 namespace be::blt {
 

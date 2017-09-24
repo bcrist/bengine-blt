@@ -3,18 +3,17 @@
 #define BE_BLT_REF_NODE_HPP_
 
 #include "node.hpp"
-#include <be/util/string_span.hpp>
 
 namespace be::blt {
 
 struct RefNode : Node {
-   gsl::cstring_span<> id;
+   SV id;
    std::unique_ptr<Node> parent;
 
-   RefNode(gsl::cstring_span<> id)
+   RefNode(SV id)
       : id(id) { }
 
-   RefNode(gsl::cstring_span<> id, std::unique_ptr<Node> parent)
+   RefNode(SV id, std::unique_ptr<Node> parent)
       : id(id), parent(std::move(parent)) { }
 
    virtual void operator()(std::ostream& os) const override {

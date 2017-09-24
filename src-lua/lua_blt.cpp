@@ -1,5 +1,6 @@
 #include "lua_blt.hpp"
 #include <be/blt/blt.hpp>
+#include <be/belua/lua_helpers.hpp>
 
 /*!! include('common/binary_lua_module', {
    fn = require_load_file(be.fs.canonical('../meta/lua_blt.lua'), '@BLT core'),
@@ -134,15 +135,14 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////////////
 int blt_compile(lua_State* L) {
-   std::size_t len;
-   const char* input = luaL_tolstring(L, 1, &len);
-   S output = blt::compile_blt(gsl::cstring_span<>(input, len));
-   lua_pop(L, 1); // remove luaL_tolstring string
+   using namespace std::literals::string_view_literals;
+
+   SV input = belua::to_string_view(L, 1);
+   S output = blt::compile_blt(input);
 
    S name = "blt_template";
    if (lua_gettop(L) >= 2) {
-      const char* cname = luaL_tolstring(L, 2, &len);
-      name.assign(cname, len);
+      name = belua::to_string(L, 2);
    }
 
    lua_settop(L, 0);

@@ -4,7 +4,6 @@
 
 #include "node.hpp"
 #include "token_data.hpp"
-#include <be/util/string_span.hpp>
 
 namespace be::blt {
 

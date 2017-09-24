@@ -4,7 +4,6 @@
 
 #include "token_type.hpp"
 #include <be/core/be.hpp>
-#include <gsl/string_span>
 
 namespace be::blt {
 
@@ -16,7 +15,7 @@ struct TokenLocation {
 
 ///////////////////////////////////////////////////////////////////////////////
 struct TokenData {
-   gsl::cstring_span<> text;
+   SV text;
    TokenType type;
    TokenLocation location;
 };

@@ -7,7 +7,7 @@
 namespace be::blt {
 
 ///////////////////////////////////////////////////////////////////////////////
-void compile_blt(gsl::cstring_span<> input, std::ostream& os) {
+void compile_blt(SV input, std::ostream& os) {
    Lexer lexer(input);
    lexer.lex_all();
    Parser parser(lexer.tokens());
@@ -15,14 +15,14 @@ void compile_blt(gsl::cstring_span<> input, std::ostream& os) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-S compile_blt(gsl::cstring_span<> input) {
+S compile_blt(SV input) {
    std::ostringstream oss;
    compile_blt(input, oss);
    return oss.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void debug_blt(gsl::cstring_span<> input, std::ostream& os) {
+void debug_blt(SV input, std::ostream& os) {
    Lexer lexer(input);
    lexer.lex_all();
    Parser parser(lexer.tokens());
@@ -30,7 +30,7 @@ void debug_blt(gsl::cstring_span<> input, std::ostream& os) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-S debug_blt(gsl::cstring_span<> input) {
+S debug_blt(SV input) {
    std::ostringstream oss;
    debug_blt(input, oss);
    return oss.str();

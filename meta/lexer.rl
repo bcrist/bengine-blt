@@ -3,6 +3,7 @@
 #include "pch.hpp"
 #include "lexer.hpp"
 #include <be/core/exceptions.hpp>
+#include <algorithm>
 
 #define BE_BLT_TOKEN_ESTIMATE_RATIO 0.2
 
@@ -115,7 +116,7 @@ namespace {
 } // be::blt::()
 
 ///////////////////////////////////////////////////////////////////////////////
-void Lexer::lex_backtick_(gsl::cstring_span<> contents) {
+void Lexer::lex_backtick_(SV contents) {
    p_ = contents.data();
    pe_ = p_ + contents.length();
    const char* eof = pe_;
@@ -131,7 +132,7 @@ void Lexer::lex_backtick_(gsl::cstring_span<> contents) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Lexer::Lexer(gsl::cstring_span<> input)
+Lexer::Lexer(SV input)
    : input_(input)
 { }
 
@@ -179,7 +180,7 @@ void Lexer::lex_all() {
          if (ts_ != te_) {
             std::ptrdiff_t offset = ts_ - ps_;
             std::ptrdiff_t length = te_ - ts_;
-            lex_backtick_(input_.subspan(offset, length));
+            lex_backtick_(input_.substr(offset, length));
          }
          return;
       }
@@ -188,7 +189,7 @@ void Lexer::lex_all() {
          if (ts_ != te_) {
             std::ptrdiff_t offset = ts_ - ps_;
             std::ptrdiff_t length = te_ - ts_;
-            lex_backtick_(input_.subspan(offset, length));
+            lex_backtick_(input_.substr(offset, length));
          }
          ts_ = ++i;
          last_line = line_;
@@ -204,7 +205,7 @@ void Lexer::lex_all() {
          } else {
             std::ptrdiff_t offset = ts_ - ps_;
             std::ptrdiff_t length = te_ - ts_;
-            lex_backtick_(input_.subspan(offset, length));
+            lex_backtick_(input_.substr(offset, length));
          }
          ts_ = ++i;
          last_line = line_;
@@ -259,11 +260,11 @@ void Lexer::t_(TokenType type) {
    std::ptrdiff_t length = te_ - ts_;
    U32 line = line_;
    U32 column = (U32)(ts_ - ls_ + 1);
-   tokens_.push_back({ input_.subspan(offset, length), type, { line, column } });
+   tokens_.push_back({ input_.substr(offset, length), type, { line, column } });
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Lexer::t_(TokenType type, U32 line, U32 column, gsl::cstring_span<> text) {
+void Lexer::t_(TokenType type, U32 line, U32 column, SV text) {
    tokens_.push_back({ text, type, { line, column } });
 }
 

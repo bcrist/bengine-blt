@@ -522,7 +522,7 @@ std::unique_ptr<Node> Parser::ref_or_call_() {
    node_ptr n = ref_();
    if (n) {
       if (try_next_(TokenType::colon)) {
-         gsl::cstring_span<> method = expect_next_(TokenType::identifier)->text;
+         SV method = expect_next_(TokenType::identifier)->text;
          expect_next_(TokenType::paren_opener);
          node_ptr expr_list = expr_list_();
          expect_next_(TokenType::paren_closer);

@@ -3,7 +3,6 @@
 #define BE_BLT_LEXER_HPP_
 
 #include "token_data.hpp"
-#include <gsl/string_span>
 #include <vector>
 
 namespace be::blt {
@@ -11,18 +10,18 @@ namespace be::blt {
 ///////////////////////////////////////////////////////////////////////////////
 class Lexer final : Immovable {
 public:
-   Lexer(gsl::cstring_span<> input);
+   Lexer(SV input);
 
    void lex_all();
    const std::vector<TokenData>& tokens();
 
 private:
-   void lex_backtick_(gsl::cstring_span<> contents);
+   void lex_backtick_(SV contents);
    void t_(TokenType type);
-   void t_(TokenType type, U32 line, U32 column, gsl::cstring_span<> text);
+   void t_(TokenType type, U32 line, U32 column, SV text);
    void check_newlines_();
 
-   gsl::cstring_span<> input_;
+   SV input_;
    std::vector<TokenData> tokens_;
    const char* ps_;
    const char* p_;
