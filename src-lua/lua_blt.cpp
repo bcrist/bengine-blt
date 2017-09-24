@@ -2,6 +2,8 @@
 #include <be/blt/blt.hpp>
 #include <be/belua/lua_helpers.hpp>
 
+//#bgl stop
+
 /*!! include('common/binary_lua_module', {
    fn = require_load_file(be.fs.canonical('../meta/lua_blt.lua'), '@BLT core'),
    symbol = 'BE_BLT_COMPILED_LUA_MODULE',
