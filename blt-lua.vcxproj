@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>blt-lua</ProjectName>
     <RootNamespace>blt</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectGuid>{FCA8F7D1-669B-4D78-BE76-6BAC84D5E71C}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>blt</ProjectName>
     <RootNamespace>blt</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectGuid>{C624127E-5E41-4DEF-A7A2-31C3A8689A2F}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
